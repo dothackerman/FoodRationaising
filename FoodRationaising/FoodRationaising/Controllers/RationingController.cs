@@ -37,24 +37,21 @@ namespace FoodRationaising.Controllers
                 if (data[FoodType.Meat].Any(x => x.Calories != 0.0D))
                 {
                     var missingAmount = sweetsCaloriesAmount - dailyBucket.TotalCalories;
-                    var temp = GetFood(data[FoodType.Meat], missingAmount + meatAmount);
-                    dailyBucket.Foods.AddRange(temp);
+                    dailyBucket.Foods.AddRange(GetFood(data[FoodType.Meat], missingAmount + meatAmount));
                 }
 
                 if (data[FoodType.Veggies].Any(x => x.Calories != 0.0D))
                 {
                     var missingAmount = (sweetsCaloriesAmount + meatAmount) - dailyBucket.TotalCalories;
                     missingAmount += veggiesAmount;
-                    var temp = GetFood(data[FoodType.Veggies], missingAmount);
-                    dailyBucket.Foods.AddRange(temp);
+                    dailyBucket.Foods.AddRange(GetFood(data[FoodType.Veggies], missingAmount));
                 }
 
                 if (data[FoodType.Carbs].Any(x => x.Calories != 0.0D))
                 {
                     var missingAmount = (sweetsCaloriesAmount + meatAmount + veggiesAmount) - dailyBucket.TotalCalories;
                     missingAmount += carbohydratesAmount;
-                    var temp = GetFood(data[FoodType.Carbs], missingAmount);
-                    dailyBucket.Foods.AddRange(temp);
+                    dailyBucket.Foods.AddRange(GetFood(data[FoodType.Carbs], missingAmount));
                 }
 
                 dailyBuckets.Add(dailyBucket);
@@ -67,24 +64,24 @@ namespace FoodRationaising.Controllers
         {
             var newFoods = new List<Food>();
 
-            for (var index = 0; index < foods.Count; index++)
+            foreach (var food in foods)
             {
-                if (foods[index].Calories > calories)
+                if (food.Calories > calories)
                 {
-                    foods[index].Calories -= calories;
-                    newFoods.Add(new Food { Name = foods[index].Name, Calories = calories });
+                    food.Calories -= calories;
+                    newFoods.Add(new Food { Name = food.Name, Calories = calories });
                     break;
                 }
 
-                if (foods[index].Calories == calories)
+                if (food.Calories == calories)
                 {
-                    newFoods.Add(new Food { Name = foods[index].Name, Calories = calories });
-                    foods[index].Calories = 0;
+                    newFoods.Add(new Food { Name = food.Name, Calories = calories });
+                    food.Calories = 0;
                     break;
                 }
 
-                newFoods.Add(new Food { Name = foods[index].Name, Calories = foods[index].Calories });
-                foods[index].Calories = 0;
+                newFoods.Add(new Food { Name = food.Name, Calories = food.Calories });
+                food.Calories = 0;
             }
 
             return newFoods;
