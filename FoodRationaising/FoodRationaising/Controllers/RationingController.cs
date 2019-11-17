@@ -4,20 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoodRationaising.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/rationing")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class RationingController : ControllerBase
     {
-
-        [HttpPost]
-        public ActionResult<List<DailyBucket>> UploadData([FromBody]List<FoodDto> foodDtos)
+        [HttpPost("")]
+        public ActionResult<List<DailyBucket>> UploadData([FromBody]List<FoodDto> foodDtos, [FromQuery]double dailyNeededCalories)
         {
             var data = foodDtos
                 .GroupBy(x => x.FoodType)
-                .ToDictionary(x => x.Key,y => y.ToList().Select(i => new Food { Name = i.Name, Calories = i.Calories }).ToList());
+                .ToDictionary(x => x.Key, y => y.Select(i => new Food { Name = i.Name, Calories = i.Calories }).ToList());
 
             var totalCalories = GetTotalCalories(data);
-            var dailyNeededCalories = 2000D; //TODO calculate from data in request
 
             var sweetsCaloriesAmount = dailyNeededCalories * 0.012;
             var meatAmount = dailyNeededCalories * 0.262;
